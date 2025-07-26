@@ -1,3 +1,9 @@
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
 /* Stili per i pulsanti personalizzati */
 .custom-btn.btn-12 {
     position: relative;
@@ -78,12 +84,29 @@
 
 /* Stili generali per il contenitore principale */
 .home-container {
-    font-family: Arial, sans-serif;
-    background: url('/path/to/background.jpg') no-repeat center center fixed;
+    position: relative;
+    min-height: 100vh;
+    background: url('/images/forest.jpg') no-repeat center center fixed;
     background-size: cover;
-    color: #000;
+    color: #fff;
+    overflow: hidden;
+    font-family: Arial, sans-serif;
     padding: 20px;
     text-align: center;
+}
+
+.home-container::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: inherit;
+    filter: blur(8px);
+    z-index: 0;
+}
+
+.home-container > * {
+    position: relative;
+    z-index: 1;
 }
 
 header {
@@ -338,7 +361,6 @@ h1 + p, p + p {
     .container { padding: 20px; }
 }
 
-
 /* Stile trasparente e arrotondato per il contenitore delle card */
 .card-container {
     background: rgba(255, 255, 255, 0.2); /* semi-trasparente */
@@ -350,11 +372,31 @@ h1 + p, p + p {
     margin-bottom: 40px;
 }
 
-
-
 /* Miglioramento animazioni e rendering delle card */
 .card, .card-wrap {
     will-change: transform, opacity;
     backface-visibility: hidden;
     transform-style: preserve-3d;
 }
+.card-already-selected .card {
+    border: 4px solid #00bcd4; /* bordo azzurro */
+    box-shadow: 0 0 12px #00bcd4aa; /* leggero bagliore */
+    transition: all 0.3s ease;
+  }
+
+  .content-wrapper {
+    position: relative;
+  }
+  
+  .spinner-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.3); /* overlay semitrasparente */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999; /* sopra tutto */
+  }

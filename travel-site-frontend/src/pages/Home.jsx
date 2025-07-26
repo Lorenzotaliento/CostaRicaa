@@ -1,9 +1,11 @@
+// src/pages/Home.jsx
 import React, { useState, useRef, useEffect } from 'react';
 import { Home as HomeIcon } from 'lucide-react';
-// Import styles and external libraries
 import '../styles/Home.css';
 import { gsap } from 'gsap';
+import Loader from '../components/Spinner';
 import Card from '../components/Card';
+import CardAlert from '../components/CardAlert'; // Importa il nuovo componente
 
 const Home = () => {
   // --- Dichiarazioni di stato ---
@@ -11,13 +13,15 @@ const Home = () => {
   const [showAllIcons, setShowAllIcons] = useState(false);
   const [selectedTravel, setSelectedTravel] = useState('');
   const [activeCard, setActiveCard] = useState('');
+  const [selectedActivities, setSelectedActivities] = useState({});
+  const [allActivities, setAllActivities] = useState([]);
+  const [alert, setAlert] = useState(null); // Stato per gestire l'alert
+  const [loading, setLoading] = useState(false);
 
   // --- Riferimenti per elementi DOM ---
   const iconsRef = useRef([]);
   const arrowRef = useRef(null);
-  // --- Ref per saltare la prima animazione delle card ---
   const firstRenderRef = useRef(true);
-  // --- useRef per contenitore delle card ---
   const cardsRef = useRef(null);
 
   // --- Dati delle icone social ---
@@ -32,7 +36,6 @@ const Home = () => {
     { id: 'food', label: '🍽️' },
     { id: 'bike', label: '🚲' },
   ];
- 
 
   // --- Dati delle card per categoria ---
   const categoryCards = {
@@ -122,19 +125,139 @@ const Home = () => {
 
   // --- Gestore per selezionare la categoria attività ---
   const handleActivitySelect = (categoryId) => {
-    setActiveCard(''); // Resetta activeCard quando cambia categoria
+    setActiveCard('');
     setSelectedCategory((prev) => (prev === categoryId ? '' : categoryId));
   };
 
-  // --- Gestore per aggiungere attività (attualmente logga in console) ---
+  // --- Gestore per aggiungere attività ---
   const handleAdd = () => {
-    console.log('Attività aggiunta');
+    if (!activeCard || !selectedCategory) {
+      setAlert({
+        type: 'error',
+        title: 'Errore',
+        message: 'Per aggiungere un\'attività devi prima selezionare una categoria e una card.',
+      });
+      setActiveCard('');
+      return;
+    }
+
+    let added = false;
+
+    setSelectedActivities((prev) => {
+      const existing = prev[selectedCategory] || [];
+      const alreadyAdded = existing.some((c) => c.header === activeCard.header);
+
+      if (selectedCategory === 'home' && existing.length >= 1) {
+        setAlert({
+          type: 'error',
+          title: 'Errore',
+          message: 'Puoi aggiungere solo una attività per la categoria "home".',
+        });
+        setActiveCard('');
+        return prev;
+      }
+
+      if (alreadyAdded) {
+        setAlert({
+          type: 'error',
+          title: 'Errore',
+          message: 'L\'attività è già presente.',
+        });
+        setActiveCard('');
+        return prev;
+      }
+
+      added = true;
+      return {
+        ...prev,
+        [selectedCategory]: [...existing, activeCard],
+      };
+    });
+
+    setAllActivities((prev) => {
+      if (selectedCategory === 'home' && prev.some((c) => c.category === 'home')) {
+        return prev;
+      }
+
+      const alreadyInAll = prev.some(
+        (c) => c.header === activeCard.header && c.category === selectedCategory
+      );
+      if (alreadyInAll) return prev;
+
+      if (!added) return prev;
+
+      return [...prev, { ...activeCard, category: selectedCategory }];
+    });
+
+    if (added) {
+      setAlert({
+        type: 'success',
+        title: 'Attività aggiunta',
+        message: 'Hai aggiunto una nuova attività alla lista.',
+      });
+    }
+    setActiveCard('');
   };
 
   // --- Gestore per rimuovere l'attività selezionata ---
   const handleRemove = () => {
-    console.log('Attività rimossa');
+    if (!activeCard || !selectedCategory) {
+      setAlert({
+        type: 'error',
+        title: 'Errore',
+        message: 'Seleziona prima un\'attività da rimuovere.',
+      });
+      return;
+    }
+
+    const existsInAll = allActivities.some(
+      (item) => item.header === activeCard.header && item.category === selectedCategory
+    );
+
+    if (!existsInAll) {
+      setAlert({
+        type: 'error',
+        title: 'Errore',
+        message: 'L\'attività selezionata non è presente nella lista.',
+      });
+      return;
+    }
+
+    setSelectedActivities((prev) => {
+      const existing = prev[selectedCategory] || [];
+      const filtered = existing.filter((c) => c.header !== activeCard.header);
+
+      return {
+        ...prev,
+        [selectedCategory]: filtered,
+      };
+    });
+
+    setAllActivities((prev) => prev.filter((c) => !(c.header === activeCard.header && c.category === selectedCategory)));
+
     setActiveCard('');
+    setAlert({
+      type: 'success',
+      title: 'Attività rimossa',
+      message: 'L\'attività è stata rimossa con successo.',
+    });
+  };
+
+  // --- Gestore per svuotare tutte le attività selezionate ---
+  const handleClearAll = () => {
+    setAlert(null);
+    setLoading(true);
+    setTimeout(() => {
+      setSelectedActivities({});
+      setAllActivities([]);
+      setActiveCard('');
+      setLoading(false);
+      setAlert({
+        type: 'success',
+        title: 'Lista svuotata',
+        message: 'Hai svuotato la lista delle attività.',
+      });
+    }, 2000);
   };
 
   // --- Gestore per procedere al passo successivo ---
@@ -144,11 +267,10 @@ const Home = () => {
   };
 
   // --- Gestore per selezionare una card di viaggio ---
-  const handleTravel = (header) => {
-    setSelectedTravel(header);
-    setActiveCard(header);
-
-    console.log('Hai selezionato', header);
+  const handleTravel = (card) => {
+    setSelectedTravel(card.header);
+    setActiveCard(card);
+    console.log('Hai selezionato', card);
   };
 
   // --- Prepara l'ordinamento delle icone in base a showAllIcons ---
@@ -160,11 +282,14 @@ const Home = () => {
   const renderedCards =
     selectedCategory &&
     categoryCards[selectedCategory].map((card, index) => (
-      <div
+        <div
         key={index}
-        onClick={() => handleTravel(card.header)}
+        onClick={() => handleTravel(card)}
         style={{ cursor: 'pointer' }}
-        className={activeCard === card.header ? 'card-active' : ''}
+        className={`
+          ${activeCard && activeCard.header === card.header ? 'card-active' : ''}
+          ${selectedActivities[selectedCategory]?.some((c) => c.header === card.header) ? 'card-already-selected' : ''}
+        `}
       >
         <Card header={card.header} content={card.content} image={card.image} />
       </div>
@@ -199,6 +324,20 @@ const Home = () => {
     return () => ctx.revert();
   }, [selectedCategory]);
 
+  // --- useEffect per loggare tutte le attività selezionate ---
+  useEffect(() => {
+    console.log('🟢 Stato aggiornato - Tutte le attività selezionate:', allActivities);
+    // Attiva rotazione su "Prosegui" se ci sono attività salvate
+    const nextButton = document.querySelector('.custom-btn.btn-12:last-of-type');
+    if (nextButton) {
+      if (allActivities.length > 0) {
+        nextButton.classList.add('btn-animated');
+      } else {
+        nextButton.classList.remove('btn-animated');
+      }
+    }
+  }, [allActivities]);
+
   // --- JSX di ritorno con sezioni e commenti chiari ---
   return (
     <div className="home-container">
@@ -217,7 +356,6 @@ const Home = () => {
             const isVisible = showAllIcons || ['home', 'hiking', 'beach', 'x'].includes(icon.id);
 
             if (icon.id === 'x') {
-              // Icona freccia per espandere/contrarre le icone
               return (
                 <span
                   key={icon.id}
@@ -249,33 +387,60 @@ const Home = () => {
 
       {/* Area contenuti principale */}
       <main>
-        {/* Renderizza le card se una categoria è selezionata */}
-        {selectedCategory && (
-          <div className="card-container">
-            <div className="container" ref={cardsRef}>
-              {renderedCards}
-            </div>
-          </div>
-        )}
-
-        {/* Bottoni di azione */}
-        <div className="buttons" style={{ justifyContent: 'center', gap: '20px', marginTop: '20px' }}>
-          <button className={`custom-btn btn-12 ${activeCard ? 'btn-animated' : ''}`} onClick={handleAdd}>
-            <span>✔</span>
-            <span>Aggiungi</span>
-          </button>
-
-          <button className={`custom-btn btn-12 ${activeCard ? 'btn-animated' : ''}`} onClick={handleRemove}>
-            <span>✖</span>
-            <span>Rimuovi</span>
-          </button>
-
-          <button className="custom-btn btn-12 " onClick={handleNext}>
-            <span>➜</span>
-            <span>Prosegui</span>
-          </button>
+  <div className="content-wrapper">
+    {/* Contenuto normale */}
+    {selectedCategory && (
+      <div className="card-container">
+        <div className="container" ref={cardsRef}>
+          {renderedCards}
         </div>
-      </main>
+      </div>
+    )}
+
+    <div className="buttons" style={{ justifyContent: 'center', gap: '20px', marginTop: '20px' }}>
+      <button className={`custom-btn btn-12 ${activeCard ? 'btn-animated' : ''}`} onClick={handleAdd}>
+        <span>✔</span>
+        <span>Aggiungi</span>
+      </button>
+
+      <button
+        className={`custom-btn btn-12 ${activeCard ? 'btn-animated' : ''}`}
+        onClick={handleRemove}
+        disabled={!activeCard}
+      >
+        <span>✖</span>
+        <span>Rimuovi</span>
+      </button>
+
+      <button className="custom-btn btn-12" onClick={handleClearAll}>
+        <span>🗑️</span>
+        <span>Svuota tutto</span>
+      </button>
+
+      <button className="custom-btn btn-12" onClick={handleNext}>
+        <span>➜</span>
+        <span>Prosegui</span>
+      </button>
+    </div>
+
+    {/* Spinner overlay */}
+    {loading && (
+      <div className="spinner-overlay">
+        <Loader />
+      </div>
+    )}
+  </div>
+</main>
+
+      {/* Renderizza CardAlert se presente */}
+      {alert && (
+        <CardAlert
+          type={alert.type}
+          title={alert.title}
+          message={alert.message}
+          onClose={() => setAlert(null)}
+        />
+      )}
     </div>
   );
 };
