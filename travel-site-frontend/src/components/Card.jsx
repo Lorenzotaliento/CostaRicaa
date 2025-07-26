@@ -38,8 +38,11 @@ const Card = ({ header, content, image }) => {
     setMouseLeaveDelay(delay);
   };
 
+  const clamp = (num, min, max) => Math.min(Math.max(num, min), max);
+
   const mousePX = mouseX / width;
-  const mousePY = mouseY / height;
+  const mousePYRaw = mouseY / height;
+  const mousePY = clamp(mousePYRaw, -0.5, 0.2);
 
   const isActive = cardRef.current?.classList.contains('card-active');
   const cardStyle = {

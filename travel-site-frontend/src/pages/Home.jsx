@@ -15,6 +15,10 @@ const Home = () => {
   // --- Riferimenti per elementi DOM ---
   const iconsRef = useRef([]);
   const arrowRef = useRef(null);
+  // --- Ref per saltare la prima animazione delle card ---
+  const firstRenderRef = useRef(true);
+  // --- useRef per contenitore delle card ---
+  const cardsRef = useRef(null);
 
   // --- Dati delle icone social ---
   const socialIcons = [
@@ -166,6 +170,35 @@ const Home = () => {
       </div>
     ));
 
+  // --- useEffect per animare le card al cambio di selectedCategory, saltando il primo render ---
+  useEffect(() => {
+    if (firstRenderRef.current) {
+      firstRenderRef.current = false;
+      return;
+    }
+
+    let ctx = gsap.context(() => {
+      const cardElements = cardsRef.current?.children;
+      if (cardElements && cardElements.length > 0) {
+        gsap.fromTo(
+          cardElements,
+          { opacity: 0, y: 20 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.4,
+            stagger: 0.1,
+            ease: 'power3.out',
+            overwrite: 'auto',
+            clearProps: 'opacity,transform',
+          }
+        );
+      }
+    }, cardsRef);
+
+    return () => ctx.revert();
+  }, [selectedCategory]);
+
   // --- JSX di ritorno con sezioni e commenti chiari ---
   return (
     <div className="home-container">
@@ -217,7 +250,13 @@ const Home = () => {
       {/* Area contenuti principale */}
       <main>
         {/* Renderizza le card se una categoria è selezionata */}
-        {selectedCategory && <div className="container">{renderedCards}</div>}
+        {selectedCategory && (
+          <div className="card-container">
+            <div className="container" ref={cardsRef}>
+              {renderedCards}
+            </div>
+          </div>
+        )}
 
         {/* Bottoni di azione */}
         <div className="buttons" style={{ justifyContent: 'center', gap: '20px', marginTop: '20px' }}>

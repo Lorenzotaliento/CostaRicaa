@@ -257,6 +257,7 @@ h1 + p, p + p {
 }
 
 .card {
+    will-change: transform, opacity;
     position: relative;
     flex: 0 0 240px;
     width: 240px;
@@ -338,3 +339,22 @@ h1 + p, p + p {
 }
 
 
+/* Stile trasparente e arrotondato per il contenitore delle card */
+.card-container {
+    background: rgba(255, 255, 255, 0.2); /* semi-trasparente */
+    border-radius: 20px;
+    padding: 30px;
+    backdrop-filter: blur(10px); /* effetto vetro */
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    margin-bottom: 40px;
+}
+
+
+
+/* Miglioramento animazioni e rendering delle card */
+.card, .card-wrap {
+    will-change: transform, opacity;
+    backface-visibility: hidden;
+    transform-style: preserve-3d;
+}
