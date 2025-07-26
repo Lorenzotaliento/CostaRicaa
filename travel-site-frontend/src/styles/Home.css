@@ -1,0 +1,340 @@
+/* Stili per i pulsanti personalizzati */
+.custom-btn.btn-12 {
+    position: relative;
+    border: none;
+    box-shadow: none;
+    width: 130px;
+    height: 40px;
+    line-height: 42px;
+    perspective: 230px;
+    cursor: pointer;
+    background: none;
+}
+
+.custom-btn.btn-12 span {
+    background: linear-gradient(0deg, rgba(0,172,238,1) 0%, rgba(2,126,251,1) 100%);
+    display: block;
+    position: absolute;
+    width: 130px;
+    height: 40px;
+    box-shadow:
+      inset 2px 2px 2px 0px rgba(255,255,255,.5),
+      7px 7px 20px 0px rgba(0,0,0,.1),
+      4px 4px 5px 0px rgba(0,0,0,.1);
+    border-radius: 5px;
+    text-align: center;
+    box-sizing: border-box;
+    transition: all 0.3s;
+    color: white;
+    font-weight: bold;
+    line-height: 40px;
+}
+
+.custom-btn.btn-12 span:nth-child(1) {
+    box-shadow:
+      -7px -7px 20px 0px #fff9,
+      -4px -4px 5px 0px #fff9,
+      7px 7px 20px 0px #0002,
+      4px 4px 5px 0px #0001;
+    transform: rotateX(90deg);
+    transform-origin: 50% 50% -20px;
+}
+
+.custom-btn.btn-12 span:nth-child(2) {
+    transform: rotateX(0deg);
+    transform-origin: 50% 50% -20px;
+}
+
+/* Animazione controllata via classe */
+.custom-btn.btn-12.btn-animated span:nth-child(2) {
+    transform: rotateX(-90deg);
+    color: transparent;
+}
+
+.custom-btn.btn-12.btn-animated span:nth-child(1) {
+    transform: rotateX(0deg);
+}
+
+.buttons {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 20px;
+}
+
+@media (max-width: 768px) {
+    .custom-btn.btn-12 {
+        width: 100px;
+        height: 35px;
+    }
+
+    .custom-btn.btn-12 span {
+        width: 100px;
+        height: 35px;
+        font-size: 0.8em;
+        line-height: 35px;
+    }
+}
+
+/* Stili generali per il contenitore principale */
+.home-container {
+    font-family: Arial, sans-serif;
+    background: url('/path/to/background.jpg') no-repeat center center fixed;
+    background-size: cover;
+    color: #000;
+    padding: 20px;
+    text-align: center;
+}
+
+header {
+    position: relative;
+    padding: 20px 0;
+}
+
+h1 {
+    font-size: 2em;
+    color: #fff;
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+    margin: 0;
+}
+
+h2 {
+    font-size: 1.5em;
+    color: #000;
+    margin: 10px 0;
+}
+
+h2 span {
+    font-size: 1.2em;
+    color: #fff;
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+}
+
+.social-icons {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 10px;
+    background: rgba(184, 52, 52, 0.8);
+    padding: 5px 10px;
+    border-radius: 20px;
+}
+
+.social-icon {
+    font-size: 1.2em;
+    cursor: pointer;
+    padding: 5px;
+    transition: opacity 0.3s, transform 0.3s, scale 0.3s;
+}
+
+.social-icon.next-arrow {
+    margin-left: 0;
+}
+
+.social-icon.selected {
+    background-color: #e0e0e0;
+    border-radius: 5px;
+}
+
+.green-dot {
+    background: green;
+    border-radius: 50%;
+    width: 8px;
+    height: 8px;
+    display: inline-block;
+    margin-left: 5px;
+}
+
+.hidden {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.5);
+    pointer-events: none;
+}
+
+.properties-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    margin: 20px 0;
+    justify-content: center;
+}
+
+.property-card {
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 10px;
+    overflow: hidden;
+    text-align: center;
+    padding: 10px;
+}
+
+.property-card img {
+    width: 100%;
+    height: auto;
+    border-radius: 5px;
+}
+
+.property-card p {
+    margin: 5px 0;
+    font-weight: bold;
+}
+
+main {
+    padding: 20px;
+}
+
+/* Stili per le card 3D */
+body {
+    margin: 40px 0;
+    font-family: "Raleway";
+    font-size: 14px;
+    font-weight: 500;
+    background-color: #BCAAA4;
+    -webkit-font-smoothing: antialiased;
+}
+
+.title {
+    font-family: "Raleway";
+    font-size: 24px;
+    font-weight: 700;
+    color: #5D4037;
+    text-align: center;
+}
+
+p {
+    line-height: 1.5em;
+}
+
+h1 + p, p + p {
+    margin-top: 10px;
+}
+
+.container {
+    padding: 40px 80px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.card-wrap {
+    margin: 10px;
+    transform: perspective(800px);
+    transform-style: preserve-3d;
+    cursor: pointer;
+}
+
+.card-wrap:hover .card-info {
+    transform: translateY(0);
+}
+
+.card-wrap:hover .card-info p {
+    opacity: 1;
+}
+
+.card-wrap:hover .card-info,
+.card-wrap:hover .card-info p {
+    transition: 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.card-wrap:hover .card-info:after {
+    transition: 5s cubic-bezier(0.23, 1, 0.32, 1);
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.card-wrap:hover .card-bg {
+    transition: 0.6s cubic-bezier(0.23, 1, 0.32, 1), opacity 5s cubic-bezier(0.23, 1, 0.32, 1);
+    opacity: 0.8;
+}
+
+.card-wrap:hover .card {
+    transition: 0.6s cubic-bezier(0.23, 1, 0.32, 1), box-shadow 2s cubic-bezier(0.23, 1, 0.32, 1);
+    box-shadow:
+        rgba(255, 255, 255, 0.2) 0 0 40px 5px,
+        rgba(255, 255, 255, 1) 0 0 0 1px,
+        rgba(0, 0, 0, 0.66) 0 30px 60px 0,
+        inset #333 0 0 0 5px,
+        inset white 0 0 0 6px;
+}
+
+.card {
+    position: relative;
+    flex: 0 0 240px;
+    width: 240px;
+    height: 320px;
+    background-color: #333;
+    overflow: hidden;
+    border-radius: 10px;
+    box-shadow:
+        rgba(0, 0, 0, 0.66) 0 30px 60px 0,
+        inset #333 0 0 0 5px,
+        inset rgba(255, 255, 255, 0.5) 0 0 0 6px;
+    transition: 1s cubic-bezier(0.445, 0.05, 0.55, 0.95);
+}
+
+.card-bg {
+    opacity: 0.5;
+    position: absolute;
+    top: -20px;
+    left: -20px;
+    width: 100%;
+    height: 100%;
+    padding: 20px;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+    transition: 1s cubic-bezier(0.445, 0.05, 0.55, 0.95), opacity 5s 1s cubic-bezier(0.445, 0.05, 0.55, 0.95);
+    pointer-events: none;
+}
+
+.card-info {
+    padding: 20px;
+    position: absolute;
+    bottom: 0;
+    color: #fff;
+    transform: translateY(40%);
+    transition: 0.6s 1.6s cubic-bezier(0.215, 0.61, 0.355, 1);
+}
+
+.card-info p {
+    opacity: 0;
+    text-shadow: rgba(0, 0, 0, 1) 0 2px 3px;
+    transition: 0.6s 1.6s cubic-bezier(0.215, 0.61, 0.355, 1);
+}
+
+.card-info * {
+    position: relative;
+    z-index: 1;
+}
+
+.card-info:after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 0;
+    width: 100%;
+    height: 100%;
+    background-image: linear-gradient(to bottom, transparent 0%, rgba(0, 0, 0, 0.6) 100%);
+    background-blend-mode: overlay;
+    opacity: 0;
+    transform: translateY(100%);
+    transition: 5s 1s cubic-bezier(0.445, 0.05, 0.55, 0.95);
+}
+
+.card-active .card {
+    outline: 3px solid #0ea20e;
+    box-shadow: 0 0 20px rgba(0, 188, 212, 0.6);
+    transform: scale(1.08) !important;
+    transition: all 0.3s ease-in-out;
+    z-index: 2;
+}
+/* Media Queries */
+@media (max-width: 768px) {
+    h1 { font-size: 1.5em; }
+    h2 { font-size: 1.2em; }
+    h2 span { font-size: 1em; }
+    .properties-grid { grid-template-columns: 1fr; }
+    .container { padding: 20px; }
+}
+
+
